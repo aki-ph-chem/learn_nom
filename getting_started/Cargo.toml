@@ -25,5 +25,9 @@ path = "src/ss_3/ss_3_2.rs"
 name = "ss_3_3"
 path = "src/ss_3/ss_3_3.rs"
 
+[[bin]]
+name = "ss_4_1"
+path = "src/ss_4/ss_4_1.rs"
+
 [dependencies]
 nom = "7.1.3"
