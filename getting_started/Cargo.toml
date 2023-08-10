@@ -15,7 +15,15 @@ path = "src/ss_2.rs"
 
 [[bin]]
 name = "ss_3_1"
-path = "src/ss_3_1.rs"
+path = "src/ss_3/ss_3_1.rs"
+
+[[bin]]
+name = "ss_3_2"
+path = "src/ss_3_2.rs"
+
+[[bin]]
+name = "ss_3_3"
+path = "src/ss_3_3.rs"
 
 [dependencies]
 nom = "7.1.3"
