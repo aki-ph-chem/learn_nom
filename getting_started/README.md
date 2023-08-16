@@ -13,9 +13,10 @@
 
 ```mermaid
 graph LR;
-    1[input] --> 2[my parser] --> 3[either]
+    1(( )) --input--> 2[my parser] --> 3[either]
     3--> 4[Ok: what parser didno't touch, what matched the regex]
     3--> 5[Err: ...]
+    style 1 fill:#2a2a2a,stroke:#333
 ```
 
 `Ok(<(T_1,T_2)>)`中の型T\_1,T\_2はそれぞれパーサーが処理しなかった文字列、パーサーが処理した文字列である。
@@ -150,4 +151,16 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("first parsed: {abc}; then parsed: {def_or_ghi};");
     
 }
+```
+
+
+```mermaid
+graph LR;
+1(( ))--"input"--> 2[parse_abc] --abc--> 3["abc"]
+2 --remainder--> 4[parse_def_or_ghi] --def_or_ghi--> 5["ghi"]
+4 --remainder--> 6(( ))
+style 1 fill:#2a2a2a,stroke:#333
+style 6 fill:#2a2a2a,stroke:#333
+style 3 fill:#f9f,stroke:#333 
+style 5 fill:#f9f,stroke:#333 
 ```
