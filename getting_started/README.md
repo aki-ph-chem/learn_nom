@@ -99,3 +99,55 @@ fn parser_alphabet(input: &str) -> IResult<&str, &str> {
     alpha0(input)
 }
 ```
+
+## chapter 3
+
+chapter 2では`tag()`や`alpha0()`のような実装済みのパーサーを用いてパーサーを実装することを学んだ。この章ではよく用いられる`alternatives`と`composition`を学ぶ。
+
+### alternatives
+
+２つのパーサーのうちどちらかを選ぶことを考える。nomでは`nom::brach::alt()`を用いることでこれを実現できる。
+
+`alt()`はパーサーのタプルを引数として受け取り エラーが出ないパサーがを見つけるまでタプル中のパーサーを実行する。
+もし、全て見つからないのならば最後に実行されるのパーサーのエラーの値が返される。
+
+例として文字列"abc"もしくは"def"にマッチするパーサーを考えよう。`alt()`を用いて以下のようにパーサーを構成する。
+
+```Rust
+fn parse_abc_or_def(input: &str) -> IResult<&str, &str> {
+    alt((
+        tag("abc"),
+        tag("def")
+    ))(input)
+}
+```
+
+### composition
+
+ここではより興味深い正規表現を組み合わせることを考えよう。最も簡単な方法は異なるパーサーを連続して作用させることである。
+
+以下の例ではまず、文字列"abc"にマッチングするパサーを作用した後、"def"もしくは"ghi"にマッチするパーサーを作用させている。
+
+```Rust
+use nom::branch::alt;
+use nom::bytes::complete::tag;
+use nom::IResult;
+
+fn parse_abc(input: &str) -> IResult<&str, &str> {
+    tag("abc")(input)
+}
+fn parse_def_or_ghi(input: &str) -> IResult<&str, &str> {
+    alt((
+        tag("def"),
+        tag("ghi")
+    ))(input)
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let input = "abcghi";
+    let (remainder, abc) = parse_abc(input)?;
+    let (remainder, def_or_ghi) = parse_def_or_ghi(remainder)?;
+    println!("first parsed: {abc}; then parsed: {def_or_ghi};");
+    
+}
+```
