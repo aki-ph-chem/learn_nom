@@ -164,3 +164,41 @@ style 6 fill:#2a2a2a,stroke:#333
 style 3 fill:#f9f,stroke:#333 
 style 5 fill:#f9f,stroke:#333 
 ```
+
+しかし、nomにはこのように機能を複数のパーサーを組み合わせるコンビネータを持っていいる。最も簡単なものは`nom::sequence::tuple()`である。`tuple()`はパサーのタプルを引数として受け取る。
+パースの成功した場合は各パーサーの返すOkの値のタプルを返し、失敗した場合では最初に失敗したパーサーのErrの値を返す。
+
+以下では大文字、小文字を区別せずにa,t,c,gから２個連続した文字列をパースをするパーサーを考える。
+
+まず`alt()`によってa,t,c,gの何れかにマッチするパーサー`parse_base()`を定義する。
+
+```Rust
+fn parse_base(input: &str) -> IResult<&str, &str> {
+    alt((
+        tag_no_case("a"),
+        tag_no_case("t"),
+        tag_no_case("c"),
+        tag_no_case("g")
+    ))(input)
+}
+```
+
+これを２個`tuple()`に渡すことで大文字、小文字を区別せずにa,t,c,gから２個連続した文字列をパースするパーサが書ける。
+
+```Rust
+fn parse_pair(input: &str) -> IResult<&str, (&str, &str)> {
+    // the many_m_n combinator might also be appropriate here.
+    tuple((
+        parse_base,
+        parse_base,
+    ))(input)
+}
+```
+
+nomには`alt()`,`tuple()`以外のも以下のような有用なコンビネータが実装されている。
+
+- delimited: ２個の区切り文字で区切られた文字列を取り出す
+- preceded:  
+- teminated:
+- pair:
+- separated\_pair:
