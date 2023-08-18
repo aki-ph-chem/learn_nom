@@ -44,6 +44,10 @@ name = "pair"
 path = "src/ss_3/pair.rs"
 
 [[bin]]
+name = "separated_pair"
+path = "src/ss_3/separated_pair.rs"
+
+[[bin]]
 name = "ss_4_1"
 path = "src/ss_4/ss_4_1.rs"
 
