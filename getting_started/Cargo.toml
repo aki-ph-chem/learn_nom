@@ -40,6 +40,10 @@ name = "terminated"
 path = "src/ss_3/terminated.rs"
 
 [[bin]]
+name = "pair"
+path = "src/ss_3/pair.rs"
+
+[[bin]]
 name = "ss_4_1"
 path = "src/ss_4/ss_4_1.rs"
 
