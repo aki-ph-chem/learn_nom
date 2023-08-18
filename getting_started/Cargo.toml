@@ -36,6 +36,10 @@ name = "preceded"
 path = "src/ss_3/preceded.rs"
 
 [[bin]]
+name = "terminated"
+path = "src/ss_3/terminated.rs"
+
+[[bin]]
 name = "ss_4_1"
 path = "src/ss_4/ss_4_1.rs"
 
