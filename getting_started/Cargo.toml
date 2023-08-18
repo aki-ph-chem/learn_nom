@@ -32,6 +32,10 @@ name = "delimited"
 path = "src/ss_3/delimited.rs"
 
 [[bin]]
+name = "preceded"
+path = "src/ss_3/preceded.rs"
+
+[[bin]]
 name = "ss_4_1"
 path = "src/ss_4/ss_4_1.rs"
 
