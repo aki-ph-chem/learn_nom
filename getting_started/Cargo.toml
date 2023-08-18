@@ -47,6 +47,7 @@ path = "src/ss_3/pair.rs"
 name = "separated_pair"
 path = "src/ss_3/separated_pair.rs"
 
+## chapter 4 ## 
 [[bin]]
 name = "ss_4_1"
 path = "src/ss_4/ss_4_1.rs"
@@ -54,6 +55,10 @@ path = "src/ss_4/ss_4_1.rs"
 [[bin]]
 name = "ss_4_2"
 path = "src/ss_4/ss_4_2.rs"
+
+[[bin]]
+name = "csv_parser"
+path = "src/ss_4/csv_parser.rs"
 
 [[bin]]
 name = "ss_5_1"
