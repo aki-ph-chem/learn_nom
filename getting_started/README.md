@@ -198,7 +198,7 @@ fn parse_pair(input: &str) -> IResult<&str, (&str, &str)> {
 nomには`alt()`,`tuple()`以外のも以下のような有用なコンビネータが実装されている。
 
 - delimited: ２個の区切り文字で区切られた文字列を取り出す
-- preceded:  
-- teminated:
-- pair:
-- separated\_pair:
+- preceded: 文字列1の後に続く文字列2にマッチングする。   
+- teminated: 文字列2の前に文字列1にマッチングする。
+- pair: 文字列1,文字列2が連結しているものを分離する。
+- separated\_pair: 文字列1,文字列2,文字列3が連結している時に、文字列2で文字列1,文字列3を分離する。
