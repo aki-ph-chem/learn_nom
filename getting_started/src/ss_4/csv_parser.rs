@@ -1,7 +1,7 @@
 use std::error::Error;
 use nom::{IResult, bytes::complete::tag, branch::alt};
 use nom::sequence::{separated_pair, tuple};
-use nom::character::complete::i32;
+use nom::character::complete::{i32, line_ending};
 
 #[derive(Debug,PartialEq)]
 pub struct Point3D {
@@ -16,6 +16,26 @@ fn parse_integer_2d(input: &str) -> IResult<&str, (i32, i32)> {
         tag(","),
         i32
     )(input)
+}
+
+fn first_integer_2d(input: &str) -> IResult<&str, ((i32, i32), &str)> {
+    tuple((
+            parse_integer_2d,
+            alt((line_ending, tag("")))
+    ))(input)
+}
+
+fn parse_integer_2d_colum(input: &str, result: &mut Vec<(i32, i32)>){
+    match first_integer_2d(input) {
+        Err(e) => panic!("Error: {}", e),
+        Ok((remaining, (pair, _delimiter))) => {
+            result.push(pair);
+            if remaining == "" {
+                return;
+            }
+            parse_integer_2d_colum(remaining, result);
+        }
+    }
 }
 
 fn parse_integer_3d(input: &str) -> IResult<&str, (i32, i32, i32)> {
@@ -58,6 +78,26 @@ fn parse_integer_nd(input: &str, result: &mut Vec<i32>){
                 return;
             }
             parse_integer_nd(remain, result);
+        }
+    }
+}
+
+fn first_abc_colum(input: &str) -> IResult<&str, (&str,&str)> {
+    tuple((
+            tag("abc"),
+            alt((line_ending, tag("")))
+    ))(input)
+}
+
+fn parse_abc_n_colum(input: &str, result: &mut Vec<String>) {
+    match first_abc_colum(input) {
+        Err(e) => panic!("Error: {}", e),
+        Ok((remain, (abc, _delimiter))) => {
+            result.push(abc.to_string());
+            if remain == ""{
+                return;
+            }
+            parse_abc_n_colum(remain, result);
         }
     }
 }
@@ -122,6 +162,70 @@ mod tests{
 
         Ok(())
     }
+
+    #[test]
+    fn test_first_abc_colum() -> Result<(), Box<dyn Error>> {
+        let abc_clum = 
+r"abc
+abc
+abc";
+
+        let (remaining, (abc,_delimiter)) = first_abc_colum(abc_clum)?;
+        assert_eq!(abc, "abc");
+        assert_eq!(remaining, "abc\nabc");
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_abc_n_colum() -> Result<(), Box<dyn Error>> {
+        let abc_clum = 
+r"abc
+abc
+abc";
+        let mut result = vec![];
+        parse_abc_n_colum(abc_clum, &mut result);
+        assert_eq!(result, vec!["abc".to_string(),"abc".to_string(),"abc".to_string()]);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_integer_2d() -> Result<(),Box<dyn Error>> {
+        let data_sample =
+r"1,2
+3,4
+5,6";
+        let (remain,((x,y), _delimiter)) = first_integer_2d(data_sample)?;
+        assert_eq!((x,y),(1,2));
+        assert_eq!(remain,"3,4\n5,6");
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_integer_2d_colum() -> Result<(), Box<dyn Error>> {
+        let data_sample =
+r"1,2
+3,4
+5,6";
+        let mut result = vec![];
+        parse_integer_2d_colum(data_sample, &mut result);
+        assert_eq!(vec![(1,2),(3,4),(5,6)], result);
+
+        let data_sample =
+r"1,2
+3,4
+13,14
+31,41
+5,6";
+        let mut result = vec![];
+        parse_integer_2d_colum(data_sample, &mut result);
+        assert_eq!(vec![(1,2),(3,4),(13,14),(31,41),(5,6)], result);
+
+        Ok(())
+    }
+
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
