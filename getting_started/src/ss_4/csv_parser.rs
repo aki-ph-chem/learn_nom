@@ -50,6 +50,26 @@ fn parse_integer_3d(input: &str) -> IResult<&str, (i32, i32, i32)> {
     Ok((remaining, (x,y,z)))
 }
 
+fn first_integer_3d(input: &str) -> IResult<&str, ((i32, i32, i32), &str)> {
+    tuple((
+            parse_integer_3d,
+            alt((line_ending, tag("")))
+    ))(input)
+}
+
+fn parse_integer_3d_colum(input: &str, result: &mut Vec<(i32, i32, i32)>) {
+    match first_integer_3d(input) {
+        Err(e) => panic!("Error: {}", e),
+        Ok((remaining, (coo, _delimiter))) => {
+            result.push(coo);
+            if remaining == "" {
+                return;
+            } 
+            parse_integer_3d_colum(remaining, result);
+        }
+    }
+}
+
 fn parse_to_point_3d(input: &str) -> IResult<&str, Point3D> {
     let (remaining, (x, _,y, _,z)) = tuple((
             i32,
@@ -82,7 +102,7 @@ fn parse_integer_nd(input: &str, result: &mut Vec<i32>){
     }
 }
 
-fn first_abc_colum(input: &str) -> IResult<&str, (&str,&str)> {
+fn first_abc_line(input: &str) -> IResult<&str, (&str,&str)> {
     tuple((
             tag("abc"),
             alt((line_ending, tag("")))
@@ -90,7 +110,7 @@ fn first_abc_colum(input: &str) -> IResult<&str, (&str,&str)> {
 }
 
 fn parse_abc_n_colum(input: &str, result: &mut Vec<String>) {
-    match first_abc_colum(input) {
+    match first_abc_line(input) {
         Err(e) => panic!("Error: {}", e),
         Ok((remain, (abc, _delimiter))) => {
             result.push(abc.to_string());
@@ -226,6 +246,32 @@ r"1,2
         Ok(())
     }
 
+    #[test]
+    fn test_first_integer_3d() -> Result<(), Box<dyn Error>> {
+        let data_sample =
+r"1,2,3
+3,4,9
+5,8,12";
+        let (remain, ((x,y,z), _delimiter)) = first_integer_3d(data_sample)?;
+        assert_eq!((1,2,3), (x,y,z));
+        assert_eq!("3,4,9\n5,8,12", remain);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_integer_3d_colum() -> Result<(), Box<dyn Error>> {
+        let data_sample =
+r"1,2,3
+3,4,9
+5,8,12";
+        let mut result = vec![];
+        parse_integer_3d_colum(data_sample, &mut result);
+        assert_eq!(vec![(1,2,3),(3,4,9),(5,8,12)], result);
+
+        Ok(())
+    }
+
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -240,6 +286,14 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut result_vector = vec![];
     parse_integer_nd("1,2,3,4", &mut result_vector);
+    println!("result_vector = {:?}", result_vector);
+
+    let mut result_vector = vec![];
+    let sample_data =
+r"1,2
+3,4
+5,6";
+    parse_integer_2d_colum(sample_data, &mut result_vector);
     println!("result_vector = {:?}", result_vector);
 
     Ok(())
