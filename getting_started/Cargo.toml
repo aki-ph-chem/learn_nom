@@ -69,9 +69,14 @@ path = "src/ss_5/ss_5_1.rs"
 name = "take_"
 path = "src/ss_5/take_.rs"
 
+## chapter 6 ## 
 [[bin]]
 name = "ss_6_1"
 path = "src/ss_6/ss_6_1.rs"
+
+[[bin]]
+name = "multi"
+path = "src/ss_6/multi.rs"
 
 [dependencies]
 nom = "7.1.3"
