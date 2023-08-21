@@ -1,7 +1,10 @@
-use std::error::Error;
-use nom::IResult;
-use nom::multi::{count, many0, many_m_n, many_till};
 use nom::bytes::complete::tag;
+use nom::multi::{count, fold_many0, many0, many_m_n, 
+    many_till, separated_list0, fold_many_m_n, length_count};
+use nom::combinator::map;
+use nom::number::complete::u8;
+use nom::IResult;
+use std::error::Error;
 
 fn count_abc_nth(input: &str, n: usize) -> IResult<&str, Vec<&str>> {
     count(tag("abc"), n)(input)
@@ -15,11 +18,45 @@ fn many_m_n_ab(input: &str, m: usize, n: usize) -> IResult<&str, Vec<&str>> {
     many_m_n(m, n, tag("ab"))(input)
 }
 
-fn many_till_ab(input: &str) -> IResult<&str, (Vec<&str>, &str)> {
+fn many_till_abc(input: &str) -> IResult<&str, (Vec<&str>, &str)> {
     many_till(tag("abc"), tag("end"))(input)
 }
 
-// To Do: separated_list_0, fold_many0, fold_many_m_n, length_count  
+fn separated_list0_abc<'a>(input: &'a str, delimiter: &'a str) -> IResult<&'a str, Vec<&'a str>> {
+    separated_list0(tag(delimiter), tag("abc"))(input)
+}
+
+fn fold_many_0_abc(input: &str) -> IResult<&str, Vec<&str>> {
+    fold_many0(
+        tag("abc"), 
+        Vec::new, 
+        |mut acc: Vec<&str>, item| {
+            acc.push(item);
+            acc
+        })(input)
+}
+
+fn fold_many_m_n_abc(input: &str, m: usize, n: usize) -> IResult<&str, Vec<&str>> {
+    fold_many_m_n(
+        m,
+        n,
+        tag("abc"),
+        Vec::new,
+        |mut acc: Vec<&str>, item| {
+            acc.push(item);
+            acc
+        }
+    )(input)
+}
+
+fn length_count_abc(input: &[u8]) -> IResult<&[u8], Vec<&[u8]>> {
+    length_count(
+        map(u8,
+            |i| {println!("got numbeer : {}", i);
+            i}),
+            tag("abc")
+    )(input)
+} 
 
 #[cfg(test)]
 mod tests {
@@ -47,12 +84,62 @@ mod tests {
 
     #[test]
     fn test_many_till_ab() {
-        assert_eq!(many_till_ab("abcabcend"), Ok(("", (vec!["abc", "abc"], "end"))));
-        assert_eq!(many_till_ab("abcend_efg"), Ok(("_efg", (vec!["abc"], "end"))));
+        assert_eq!(
+            many_till_abc("abcabcend"),
+            Ok(("", (vec!["abc", "abc"], "end")))
+        );
+        assert_eq!(
+            many_till_abc("abcend_efg"),
+            Ok(("_efg", (vec!["abc"], "end")))
+        );
+    }
+
+    #[test]
+    fn test_separated_list0_abc() {
+        assert_eq!(
+            separated_list0_abc("abc,abc,abc", ","),
+            Ok(("", vec!["abc", "abc", "abc"]))
+        );
+        assert_eq!(
+            separated_list0_abc("abc,def", ","),
+            Ok((",def", vec!["abc"]))
+        );
+        assert_eq!(
+            separated_list0_abc("abc;abc;abc", ";"),
+            Ok(("", vec!["abc", "abc", "abc"]))
+        );
+        assert_eq!(
+            separated_list0_abc("abc_and_abc_and_abc", "_and_"),
+            Ok(("", vec!["abc", "abc", "abc"]))
+        );
+    }
+
+    #[test]
+    fn test_fold_many0_abc() {
+        assert_eq!(
+            fold_many_0_abc("abcabcabc"),
+            Ok(("", vec!["abc", "abc", "abc"]))
+        );
+        assert_eq!(
+            fold_many_0_abc("abcabc123"),
+            Ok(("123", vec!["abc", "abc"]))
+        );
+    }
+
+    #[test]
+    fn test_fold_many_m_n_abc() {
+        assert_eq!(
+            fold_many_m_n_abc("abcabcabc", 0, 2),
+            Ok(("abc", vec!["abc", "abc"]))
+        );
+    }
+
+    #[test]
+    fn test_length_count_abc() {
+        assert_eq!(length_count_abc(&b"\x02abcabcabc"[..]), Ok((&b"abc"[..], vec![&b"abc"[..], &b"abc"[..]])));
     }
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-
     Ok(())
 }
