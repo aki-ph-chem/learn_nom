@@ -205,6 +205,8 @@ nomには`alt()`,`tuple()`以外のも以下のような有用なコンビネー
 
 ## chapter 4
 
+### 返り値をカスタムする
+
 これまでは&str型を受け取って`IResult<&str,&str>`型を返すパーサーのみを考えてきた。
 文字列をより小さな文字列へと分割することは便利であるが、nomでできることはそれだけではない。
 
@@ -243,9 +245,58 @@ fn parse_bool(input: &str) -> IResult<&str,bool> {
 }
 ```
 
-特定の文字に対しては
+ここでは、`value()`を用いたが、nomは様々な文字に対するパーサーを実装している。
+
+### より複雑な例
 
 更に複雑なものを考えてみよう。
-今回はカッコ"()"で括られたカンマ区切りの整数値"(2,3)"をパースするパーサーを考えよう。
+今回は"(2,3)"のようにカッコ"()"で括られたカンマ区切りの整数値をパースして以下の構造体`Coordinates`に変換するパーサーを考えよう。
 
-<!-- とりあえずここまで -->
+```Rust
+#[derive(Debug,PartialEq)]
+strucrt Coordinate {
+    x: i32,
+    y: i32,
+}
+```
+
+このパーサーは以下の３段階の過程を経て実行される。
+
+1. "(1,2)"からカッコ"()"の中身を取り出す。
+2. カッコの中身"1,2"をカンマ","で区切って分割する
+3. 分割された"1","2"をそれぞれ整数型に変換する
+
+```mermaid
+graph LR;
+1[1: カッコの中身を取り出す]-->2[2: カッコの中身をカンマで区切って分割する]
+2-->3[3: 分割された文字列を整数型に変換する]
+```
+
+そのため、この３段階のそれぞれに対応するパーサーが必要となる。
+
+まず、3の過程に対応するパーサーはnom側に実装されている`nom::character::complete::i32`を用いて文字列からi32型への変換を行う。
+続いて、2の過程は1の過程の`i32`と`nom::sequence::separated_pair`を用いて実装する。
+
+```Rust
+fn parse_integer_pair(input: &str) -> IResult<&str, (i32, i32)> {
+    separated_pair(
+            i32,
+            tag(","),
+            i32
+            )(input)
+}
+```
+
+最後に、1の過程は2の過程の`parse_integer_pair()`と`nom::character::delimited`を用いて以下のように実装する。
+
+```Rust
+fn parse_coodinate(input: &str) -> IResult<&str, Coordinate> {
+    let (remaining, (x, y)) = delimited(
+            tag("("),
+            parse_integer_pair,
+            tag(")")
+            )(input)?;
+
+    Ok((remainig, Coordinate {x, y}))
+}
+```
