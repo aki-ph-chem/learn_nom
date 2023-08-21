@@ -1,8 +1,8 @@
 # learn nom
 
-パーサージェネレータである`nom`で適当なパーサーを実装する。
+Rustによるパーサーコンビネータライブラリである[`nom`](https://github.com/rust-bakery/nom)で適当なパーサーを実装する。
 
-## [ss1: getting started](./getting_started)
+## [getting started](./getting_started)
 チュートリアルに取り組む
 
 ## [Appendix](./appendix)
