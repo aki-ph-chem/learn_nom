@@ -300,3 +300,60 @@ fn parse_coodinate(input: &str) -> IResult<&str, Coordinate> {
     Ok((remainig, Coordinate {x, y}))
 }
 ```
+<!-- chapter 5はまだドラフト -->
+## chapter 5
+
+プログラミングにおいてループを用いることは便利である。
+nomでもまたパーサーを繰り返し適用することは非常に便利である
+
+### predicate(述語という意味)を用いて繰り返す
+
+パーサーを繰り返す方法:
+1. predicateに支配されているパーサーを使う(???)
+2. パーサーを繰り返すコンビネータを使う
+
+`predicate`: bool型を返す関数,非常に
+
+predicateの例) `is_vowel`: 文字が英語の母音(a,e,i,o,u)かどうかを判別する 
+
+predicateパーサーは異なったカテゴリに分けられる。
+
+1. バイト単位のパーサーには次の３種類が存在する: `take_till`,`take_until`,`take_while`
+    1. `take_till`: predicateに出会うまで文字列の解析を行う。
+    2. `take_until`: predicateが最初に満たされるケースのみ解析を行う
+    3. `take_while`: predicateが満たされる限り解析を行う
+
+2. パーサー名の末尾に`1`が付くか否か 
+    1. 付かない: 空文字列を返す場合がある(マッチングしなかった場合)(例: `take_while`)
+    2. 付く: から文字列を返さない、返すような状況(マッチングしなかった場合)ではエラーを返す(例: `take_while1`)
+
+3. 特別なケース:`take_while`に対して`take_while_m_n`が存在し意味は少なくとも`m`バイト消費し、`n`バイト以上は消費しないという意味である
+
+<!-- chapter 5はまだドラフト -->
+## chapter 6
+
+一つのパーサーを繰り返し作用させることは便利であるが、パーサーを繰り返すコンビネータを用いる方がより便利である。
+nomにはパーサーを繰り返し実行するコンビネータが複数実装されている。
+
+代表例) `nom::multi::many0`: 与えられたパーサーを可能な限り実行する。結果はベクターとして返す。
+
+例えば、`tag("abc")`を与えたパーサー`parser()`を考える
+
+```Rust
+fn parser(s: &str) -> IResult<&str, Vec<&str>> {
+    many0(tag("abc"))(s)
+}
+```
+
+このパーサーは文字列に"abc"が続く限りパースを行う。
+
+他にも似た働きをするコンビネータには以下のがある。
+
+1. `count`
+2. `many0`
+3. `many_m_n`
+4. `many_till`
+5. `separated_lit0`
+6. `fold_many0`
+7. `fold_many_m_n`
+8. `length_count`
