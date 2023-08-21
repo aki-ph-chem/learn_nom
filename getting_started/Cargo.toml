@@ -60,9 +60,14 @@ path = "src/ss_4/ss_4_2.rs"
 name = "csv_parser"
 path = "src/ss_4/csv_parser.rs"
 
+## chapter 5 ## 
 [[bin]]
 name = "ss_5_1"
 path = "src/ss_5/ss_5_1.rs"
+
+[[bin]]
+name = "take_"
+path = "src/ss_5/take_.rs"
 
 [[bin]]
 name = "ss_6_1"
