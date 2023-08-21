@@ -9,4 +9,8 @@ edition = "2021"
 name = "trait_closure"
 path = "src/trait_closure.rs"
 
+[[bin]]
+name = "str_u8"
+path = "src/str_u8.rs"
+
 [dependencies]
