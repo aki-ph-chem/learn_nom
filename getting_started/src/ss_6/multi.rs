@@ -83,7 +83,7 @@ mod tests {
     }
 
     #[test]
-    fn test_many_till_ab() {
+    fn test_many_till_abc() {
         assert_eq!(
             many_till_abc("abcabcend"),
             Ok(("", (vec!["abc", "abc"], "end")))
@@ -141,5 +141,39 @@ mod tests {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    println!("count_abc_nth");
+    let (remaining, result) = count_abc_nth("abcabc", 2)?;
+    println!(" remaining = {} \n result = {:?}", remaining, result);
+
+    println!("many0_abc");
+    let (remaining, result) = many0_abc("abcabc")?;
+    println!(" remaining = {} \n result = {:?}", remaining, result);
+
+    println!("many_m_n_ab");
+    let (remaining, result) = many_m_n_ab("ababc", 0, 2)?;
+    println!(" remaining = {} \n result = {:?}", remaining, result);
+
+    println!("many_till_abc");
+    let (remaining, result) = many_till_abc("abcabcend")?;
+    println!(" remaining = {} \n result = {:?}", remaining, result);
+
+    println!("separated_list0_abc");
+    let (remaining, result) = separated_list0_abc("abc,abc,abc", ",")?;
+    println!(" remaining = {} \n result = {:?}", remaining, result);
+    let (remaining, result) = separated_list0_abc("abc_and_abc_and_abc", "_and_" )?;
+    println!(" remaining = {} \n result = {:?}", remaining, result);
+
+    println!("fold_many0_abc");
+    let (remaining, result) = fold_many_0_abc("abcabcabc123")?;
+    println!(" remaining = {} \n result = {:?}", remaining, result);
+
+    println!("fold_many_m_n_abc");
+    let (remaining, result) = fold_many_m_n_abc("abcabcabc", 0, 2)?;
+    println!(" remaining = {} \n result = {:?}", remaining, result);
+
+    println!("length_count_abc");
+    let (remaining, result) = length_count_abc(&b"\x02abcabcabc"[..])?;
+    println!(" remaining = {:?} \n result = {:?}", remaining, result);
+
     Ok(())
 }
