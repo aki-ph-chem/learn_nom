@@ -300,28 +300,29 @@ fn parse_coodinate(input: &str) -> IResult<&str, Coordinate> {
     Ok((remainig, Coordinate {x, y}))
 }
 ```
-<!-- chapter 5はまだドラフト -->
 ## chapter 5
 
-プログラミングにおいてループを用いることは便利である。
-nomでもまたパーサーを繰り返し適用することは非常に便利である
+プログラミングにおいてループを用いることは有用であるのと同じように、
+nomでもまたパーサーを繰り返し適用することは非常に有用である
 
 ### predicate(述語という意味)を用いて繰り返す
 
-パーサーを繰り返す方法:
-1. predicateに支配されているパーサーを使う(???)
-2. パーサーを繰り返すコンビネータを使う
+パーサーを繰り返し作用させる方法には以下の２つがある
 
-`predicate`: bool型を返す関数,非常に
+1. "predicateに支配されている"パーサーを使う
+2. コンビネータを用いてパーサーを繰り返す
 
-predicateの例) `is_vowel`: 文字が英語の母音(a,e,i,o,u)かどうかを判別する 
+`predicate`とは、直訳すると"述語"であるが、ここではbool型を返す関数という意味で用いる
+- predicateの例) `is_vowel`: 文字が英語の母音(a,e,i,o,u)かどうかを判別する 
 
-predicateパーサーは異なったカテゴリに分けられる。
+(確かに上の例を考えれば文字列が母音か否かと説明する"述語"と捉えられる?)
 
-1. バイト単位のパーサーには次の３種類が存在する: `take_till`,`take_until`,`take_while`
-    1. `take_till`: predicateに出会うまで文字列の解析を行う。
-    2. `take_until`: predicateが最初に満たされるケースのみ解析を行う
-    3. `take_while`: predicateが満たされる限り解析を行う
+"predicateに支配されたパーサー"は異なったカテゴリに分けられる。
+
+1. バイト単位のパーサーの３種類: `take_till`,`take_until`,`take_while`
+    1. `take_till`: `predicate`に出会うまで文字列の解析を行う。
+    2. `take_until`: `predicate`が最初に満たされるケースのみ解析を行う
+    3. `take_while`: `predicate`が満たされる限り解析を行う
 
 2. パーサー名の末尾に`1`が付くか否か 
     1. 付かない: 空文字列を返す場合がある(マッチングしなかった場合)(例: `take_while`)
@@ -329,7 +330,23 @@ predicateパーサーは異なったカテゴリに分けられる。
 
 3. 特別なケース:`take_while`に対して`take_while_m_n`が存在し意味は少なくとも`m`バイト消費し、`n`バイト以上は消費しないという意味である
 
-<!-- chapter 5はまだドラフト -->
+例として`take_till()`を使ってコロン':'が来るまでパースを続けるパーサーを示す
+
+```Rust
+fn till_colon(input: &str) -> IResult<&str, &str> {
+    take_till(|c| c == ':')(input)
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+        fn test_till_colon() {
+            assert_eq!(till_colon("abc:123"), Ok((":123", "abc")));
+        }
+}
+```
+
+<!-- chapter 6はまだドラフト -->
 ## chapter 6
 
 一つのパーサーを繰り返し作用させることは便利であるが、パーサーを繰り返すコンビネータを用いる方がより便利である。
