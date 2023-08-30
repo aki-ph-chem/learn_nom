@@ -377,11 +377,11 @@ fn test_parser() {
 
 他にも似た働きをするコンビネータには以下のがある。
 
-1. `count`
-2. `many0`
-3. `many_m_n`
-4. `many_till`
-5. `separated_lit0`
+1. `count`: 特定のパターンをn回繰り返す
+2. `many0`: 特定のパターンが続く限り繰り返す
+3. `many_m_n`: 特定のパータンをm回以上n回以下繰り返す 
+4. `many_till`: 特定のパータンの後に別の特定のパターンが現れるまで繰り返す
+5. `separated_lit0`:
 6. `fold_many0`
 7. `fold_many_m_n`
 8. `length_count`
