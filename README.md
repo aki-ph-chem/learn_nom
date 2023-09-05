@@ -5,5 +5,8 @@ Rustによるパーサーコンビネータライブラリである[`nom`](https
 ## [getting started](./getting_started)
 チュートリアルに取り組む
 
+## [error handling](./error_handling)
+エラーハンドリグ
+
 ## [Appendix](./appendix)
 技術的なtips
