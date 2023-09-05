@@ -381,7 +381,7 @@ fn test_parser() {
 2. `many0`: 特定のパターンが続く限り繰り返す
 3. `many_m_n`: 特定のパータンをm回以上n回以下繰り返す 
 4. `many_till`: 特定のパータンの後に別の特定のパターンが現れるまで繰り返す
-5. `separated_lit0`:
-6. `fold_many0`
-7. `fold_many_m_n`
-8. `length_count`
+5. `separated_lit0`: 特定のパターンがデリミタで区切らて連続している間繰り返す
+6. `fold_many0`: 特定のパターンが続く間引数として与えたクロージャを動かす
+7. `fold_many_m_n`: 特定のパターンがm回以上n回以下繰り返す間引数として与えたクロージャを動かす
+8. `length_count`: ?
